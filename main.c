@@ -76,9 +76,9 @@ short DataReady;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* Prevent unused argument(s) compilation warning */
-  if(htim->Instance==TIM5)							//wenn timer 5 ausgelöst hat tue folgendes
+  if(htim->Instance==TIM5)							//wenn timer 5 ausgelÃ¶st hat tue folgendes
   {
-  DataReady=2;										//flag um rotine auszuführen
+  DataReady=2;										//flag um rotine auszufÃ¼hren
   }
   /* NOTE : This function Should not be modified, when the callback is needed,
             the __HAL_TIM_PeriodElapsedCallback could be implemented in the user file
@@ -137,7 +137,7 @@ void Messwert()
 
 	  //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_RESET);
 
-	  DataReady=0;													//Zurücksetzen des Flag
+	  DataReady=0;													//ZurÃ¼cksetzen des Flag
 
 	  return;
 	  }
@@ -158,7 +158,7 @@ void Messwert()
 		  Messwert();
 	  }
 
-
+//	In der folgenden Abfrage werden die AusgÃ¤nge geschaltet die die Lampensterung Ã¼bernehmen. Bei der Verwedeten Hardware sind die AusgÃ¤nge zur einfachen kontrolle bereits an LED angeschlossen.
 	  if (rollY>1500)
 	  {
 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
@@ -398,7 +398,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin_1)
 {
   /* Prevent unused argument(s) compilation warning */
 
-	 DataReady=2;	//Setzen des flag das neue Daten verfügbar sind
+	 DataReady=2;	//Setzen des flag das neue Daten verfÃ¼gbar sind
 
   /* NOTE: This function Should not be modified, when the callback is needed,
            the HAL_GPIO_EXTI_Callback could be implemented in the user file
