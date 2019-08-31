@@ -160,7 +160,7 @@ DataReady=2;	//Setzen des flag das Daten verfügbar sind, notwendig da der Sensor
 	  /*
 	   * Im folgenden Abschnitt werden die Ausgänge geschaltet. Auf dem verwendeten Board sind die Pins 12 und 14 gleichzeitig LED.
 	   */
-	  if (rollY>1500)
+	  if (rollY<-1000 && rollZ>1000)
 	  {
 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
 	  }
@@ -169,7 +169,7 @@ DataReady=2;	//Setzen des flag das Daten verfügbar sind, notwendig da der Sensor
 	  		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_RESET);
 	  	  }
 
-	  if (rollY<-1500)
+	  if (rollY<-1000 && rollZ<-1000)
 	  {
 		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_SET);
 	  }
