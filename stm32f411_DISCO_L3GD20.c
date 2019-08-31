@@ -202,8 +202,8 @@ void Messwerte_L3GD20(int16_t *roll, int16_t *pitch, int16_t *yaw)
 	turnY=spiRxBuf[3]<<8;	//Verteilen der Werte aus dem recivebuffer
 	turnY+=spiRxBuf[2];
 
-	turnZ=spiRxBuf[4]<<8;
-	turnZ+=spiRxBuf[5];
+	turnZ=spiRxBuf[5]<<8;
+	turnZ+=spiRxBuf[4];
 
 							//Zur stabilisierung der Messwerte wird ein weiterer software Tiefpass eingesetzt
 	buf_x[count]=turnX;
