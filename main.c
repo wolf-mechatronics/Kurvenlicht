@@ -78,7 +78,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* Prevent unused argument(s) compilation warning */
   if(htim->Instance==TIM5)							//wenn timer 5 ausgelöst hat tue folgendes
   {
-HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);	//Rückmeldung an User Sensor ist eingeschaltet, blaue LED blinkt
+//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);	//Rückmeldung an User Sensor ist eingeschaltet, blaue LED blinkt
   }
   /* NOTE : This function Should not be modified, when the callback is needed,
             the __HAL_TIM_PeriodElapsedCallback could be implemented in the user file
@@ -137,6 +137,8 @@ void Messwert()
 
 	 Messwerte_L3GD20(&rollX, &rollY, &rollZ);
 
+	 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13,GPIO_PIN_SET);
+	 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15,GPIO_PIN_RESET);
 	  //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_RESET);
 
 	  return;
@@ -160,23 +162,26 @@ DataReady=2;	//Setzen des flag das Daten verfügbar sind, notwendig da der Sensor
 	  /*
 	   * Im folgenden Abschnitt werden die Ausgänge geschaltet. Auf dem verwendeten Board sind die Pins 12 und 14 gleichzeitig LED.
 	   */
-	  if (rollY<-1000 && rollZ>1000)
+	  if (rollY<-3000 && rollZ>3000)
 	  {
-		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15,GPIO_PIN_SET);
 	  }
-	  	  else
-	  	  {
-	  		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12,GPIO_PIN_RESET);
-	  	  }
 
-	  if (rollY<-1000 && rollZ<-1000)
+	  if (rollY>-400 && rollZ<400)
 	  {
-		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15,GPIO_PIN_RESET);
 	  }
-		  else
-		  {
-			  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14,GPIO_PIN_RESET);
-		  }
+
+
+	  if (rollY<-3000 && rollZ<-3000)
+	  {
+		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11,GPIO_PIN_SET);
+	  }
+
+	  if (rollY>-400 && rollZ>-400)
+	  {
+		  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11,GPIO_PIN_RESET);
+	  }
 
 
 
@@ -213,7 +218,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 75;
+  RCC_OscInitStruct.PLL.PLLN = 100;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -230,7 +235,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
@@ -259,7 +264,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -356,10 +361,14 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PE3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14 
+                          |GPIO_PIN_15, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : PE3 PE15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -371,8 +380,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD12 PD13 PD14 PD15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15;
+  /*Configure GPIO pins : PD11 PD12 PD13 PD14 
+                           PD15 */
+  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14 
+                          |GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -400,7 +411,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin_1)
   /* Prevent unused argument(s) compilation warning */
 
 	 DataReady=2;	//Setzen des flag das neue Daten verfügbar sind
-
+	 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13,GPIO_PIN_RESET);
+	 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15,GPIO_PIN_SET);
   /* NOTE: This function Should not be modified, when the callback is needed,
            the HAL_GPIO_EXTI_Callback could be implemented in the user file
    */
